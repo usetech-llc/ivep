@@ -331,9 +331,12 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     }
 
     function checkMyVesting(address sender) internal {
+        // all vesting balances
         if (vestingBalanceOf[sender][0] == 0) return;
 
+        // check all vesting times
         for (uint256 k = 0; k < vestingTimes.length; k++) {
+            // if current vesting time has come - unlock amount
             if (vestingTimes[k] < now) {
                 vestingBalanceOf[sender][0] -= vestingBalanceOf[sender][vestingTimes[k]];
                 vestingBalanceOf[sender][vestingTimes[k]] = 0;
