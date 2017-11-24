@@ -12,7 +12,7 @@ contract CrowdsaleParameters {
     // 1531612800 = July 15, 2018. 1 month from June 15, 2018. 00:00:00 GMT
     // 1534291200 = August 15, 2018. 1 month from July 15, 2018. 00:00:00 GMT
     // 1536969600 = September 15, 2018. 1 month from August 15, 2018. 00:00:00 GMT
-    // 1539561600 = Oktober 15, 2018. 1 month from September 15, 2018. 00:00:00 GMT
+    // 1539561600 = October 15, 2018. 1 month from September 15, 2018. 00:00:00 GMT
     // 1542240000 = November 15, 2018. 1 month from Oktober 15, 2018. 00:00:00 GMT
     // 1544832000 = December 15, 2018. 1 month from November 15, 2018. 00:00:00 GMT
 
