@@ -1,11 +1,10 @@
 pragma solidity ^0.4.15;
 import './Owned.sol';
-import './TKLNToken.sol';
+import './IVEPToken.sol';
 
 contract IvepCrowdsale is Owned, CrowdsaleParameters {
-    /* ICO and Pre-ICO Parameters */
+    /* ICO Parameters */
     address private saleWalletAddress;
-    address private presaleWalletAddress;
     uint private tokenMultiplier = 10;
     bool private allowRefunds = false;
     uint[] public ICOStagePeriod; // Array of stage timestamps in Unix epoch seconds
@@ -23,7 +22,7 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
     event Debug(string message);
     event Debug1(uint number);
 
-    enum Stage { PreSale, GeneralSale, Inactive }
+    enum Stage { GeneralSale, Inactive }
 
     /**
     * Constructor
@@ -33,35 +32,28 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
     function IvepCrowdsale(address _tokenAddress) public {
         token = TKLNToken(_tokenAddress);
         tokenMultiplier = tokenMultiplier ** token.decimals();
-        presaleWalletAddress = CrowdsaleParameters.presaleWallet.addr;
         saleWalletAddress = CrowdsaleParameters.generalSaleWallet.addr;
 
-        ICOStagePeriod.push(CrowdsaleParameters.presaleStartDate);
-        ICOStagePeriod.push(CrowdsaleParameters.presaleEndDate);
         ICOStagePeriod.push(CrowdsaleParameters.generalSaleStartDate);
         ICOStagePeriod.push(CrowdsaleParameters.generalSaleEndDate);
 
         // Initialize ICO goal
-        ICOGoal = CrowdsaleParameters.generalSaleWallet.amount + CrowdsaleParameters.presaleWallet.amount;
+        ICOGoal = CrowdsaleParameters.generalSaleWallet.amount;
     }
 
     /**
-    * Get active stage (pre-sale or general sale)
+    * Get active stage (general sale)
     *
     * @return stage - active stage
     */
     function getActiveStage() internal constant returns (Stage) {
         if(ICOStagePeriod[0] <= now && now < ICOStagePeriod[1])
-            return Stage.PreSale;
-
-        if(ICOStagePeriod[2] <= now && now < ICOStagePeriod[3])
             return Stage.GeneralSale;
-
         return Stage.Inactive;
     }
 
     /**
-    * Is (pre)sale active
+    * Is sale active
     *
     * @return active - True, if sale is active
     */
@@ -82,7 +74,7 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
     * @param amount - amount of Wei received
     */
     function processPayment(address bakerAddress, uint amount) internal {
-        // Check current stage, either pre-sale or general sale should be active
+        // Check current stage, either general sale should be active
         Stage currentStage = getActiveStage();
         require(currentStage != Stage.Inactive);
 
@@ -117,16 +109,13 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
         else if (amount < 1000 ether)
             tokensPerEth = 16350;
 
-        if (currentStage == Stage.PreSale)
-            tokensPerEth = tokensPerEth * 2;
-
         // Calculate token amount that is purchased,
         // truncate to integer
         uint tokenAmount = amount * tokensPerEth / 1e18;
 
         // Check that stage wallet has enough tokens. If not, sell the rest and
         // return change.
-        address tokenSaleWallet = currentStage == Stage.PreSale ? presaleWalletAddress : saleWalletAddress;
+        address tokenSaleWallet = currentStage == saleWalletAddress;
         uint remainingTokenBalance = token.balanceOf(tokenSaleWallet) / tokenMultiplier;
         if (remainingTokenBalance < tokenAmount) {
             tokenAmount = remainingTokenBalance;
