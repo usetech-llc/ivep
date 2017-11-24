@@ -62,6 +62,12 @@ contract IVEPToken is Owned, CrowdsaleParameters {
         mintToken(wallet14partners);
         mintToken(wallet15lottery);
 
+        /*
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 7500000 * exponent, CrowdsaleParameters.generalSaleVestingTime); // unlocked immedeately after ICO ends
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 6000000 * exponent, CrowdsaleParameters.generalSaleVestingTime + 90 days); // available after ICO end date + 90 days
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 3862500 * exponent, CrowdsaleParameters.generalSaleVestingTime + 1 years); // available after ICO end date + 1 year
+        */
+
         NewTKLNToken(address(this));
     }
 
