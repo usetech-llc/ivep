@@ -1,0 +1,12 @@
+# This config should be placed in following path:
+#   ~/.local/share/io.parity.ethereum/config.toml
+
+[parity]
+# Auto-updates only to consensus/security updates.
+auto_update = "critical"
+# Dev Test Network
+chain = "dev"
+
+tx_gas_limit = "90000000"
+gas_cap = "90000000"
+gasprice = "0"
