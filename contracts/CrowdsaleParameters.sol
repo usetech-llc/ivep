@@ -8,13 +8,13 @@ contract CrowdsaleParameters {
     }
 
     // Vesting time stamps: 50% will vest after ICO ends. The rest will vest within 6 months in equal monthly installments
-    // 1529020800 = June 15, 2018. 6 months from December 15, 2017. 00:00:00 GMT
-    // 1531612800 = July 15, 2018. 1 month from June 15, 2018. 00:00:00 GMT
-    // 1534291200 = August 15, 2018. 1 month from July 15, 2018. 00:00:00 GMT
-    // 1536969600 = September 15, 2018. 1 month from August 15, 2018. 00:00:00 GMT
-    // 1539561600 = October 15, 2018. 1 month from September 15, 2018. 00:00:00 GMT
-    // 1542240000 = November 15, 2018. 1 month from Oktober 15, 2018. 00:00:00 GMT
-    // 1544832000 = December 15, 2018. 1 month from November 15, 2018. 00:00:00 GMT
+    // 1532131200 = July 21, 2018. 6 months from Jan 21, 2018. 00:00:00 GMT
+    // 1534809600 = August 21, 2018. 1 month from July 21, 2018. 00:00:00 GMT
+    // 1537488000 = September 21, 2018. 1 month from August 21, 2018. 00:00:00 GMT
+    // 1540080000 = October 21, 2018. 1 month from September 21, 2018. 00:00:00 GMT
+    // 1542758400 = November 21, 2018. 1 month from October 21, 2018. 00:00:00 GMT
+    // 1545350400 = December 21, 2018. 1 month from November 21, 2018. 00:00:00 GMT
+    // 1548028800 = Jan 21, 2019. 1 month from December 21, 2018. 00:00:00 GMT
 
     AddressTokenAllocation internal presaleWallet       = AddressTokenAllocation(0x8d6d63c22D114C18C2a0dA6Db0A8972Ed9C40343, 100e6, 0);
     AddressTokenAllocation internal generalSaleWallet   = AddressTokenAllocation(0x9567397B445998E7E405D5Fc3d239391bf5d0200, 550e6, 0);
