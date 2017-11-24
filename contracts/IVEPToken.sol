@@ -43,30 +43,25 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     function IVEPToken() public {
         owner = msg.sender;
 
-        mintToken(presaleWallet);
         mintToken(generalSaleWallet);
-        mintToken(wallet1);
-        mintToken(wallet2);
-        mintToken(wallet3);
-        mintToken(wallet4);
-        mintToken(wallet5);
-        mintToken(wallet6);
         mintToken(foundersWallet);
-        mintToken(wallet7);
-        mintToken(wallet8genesis);
-        mintToken(wallet9);
-        mintToken(wallet10);
-        mintToken(wallet11bounty);
-        mintToken(wallet12);
-        mintToken(wallet13rsv);
-        mintToken(wallet14partners);
-        mintToken(wallet15lottery);
+        mintToken(walletReserve);
 
-        /*
-        mintToken(CrowdsaleParameters.incentiveReserveAddress, 7500000 * exponent, CrowdsaleParameters.generalSaleVestingTime); // unlocked immedeately after ICO ends
-        mintToken(CrowdsaleParameters.incentiveReserveAddress, 6000000 * exponent, CrowdsaleParameters.generalSaleVestingTime + 90 days); // available after ICO end date + 90 days
-        mintToken(CrowdsaleParameters.incentiveReserveAddress, 3862500 * exponent, CrowdsaleParameters.generalSaleVestingTime + 1 years); // available after ICO end date + 1 year
-        */
+        mintToken(CrowdsaleParameters.preSaleWallet, 50e7, CrowdsaleParameters.generalSaleEndDate); // 50% on preSale wallet unlocked immediately after ICO ends
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 1 month); // 50%/6 available after ICO end date + 1 month
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 2 month); // 50%/6 available after ICO end date + 1 month
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 3 month); // 50%/6 available after ICO end date + 1 mont
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 4 month); // 50%/6 available after ICO end date + 1 mont
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 5 month); // 50%/6 available after ICO end date + 1 mont
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 6 month); // 50%/6 available after ICO end date + 1 mont
+
+        mintToken(CrowdsaleParameters.bountyWallet, 100e7 * 3333 / 10000, CrowdsaleParameters.generalSaleEndDate); // 33.33% on bounty wallet unlocked immediately after ICO ends
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 1 month); // 66.67%/6 available after ICO end date + 1 month
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 2 month); // 66.67%/6 available after ICO end date + 1 month
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 3 month); // 66.67%/6 available after ICO end date + 1 mont
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 4 month); // 66.67%/6 available after ICO end date + 1 mont
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 5 month); // 66.67%/6 available after ICO end date + 1 mont
+        mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 6 month); // 66.67%/6 available after ICO end date + 1 mont
 
         NewTKLNToken(address(this));
     }
@@ -90,24 +85,23 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     * @param _crowdsaleAddress - crowdsale contract address
     */
     function approveForCrowdsale(address _crowdsaleAddress) public onlyOwner {
-        approveAllocation(presaleWallet, _crowdsaleAddress);
+        approveAllocation(preSaleWallet, _crowdsaleAddress);
         approveAllocation(generalSaleWallet, _crowdsaleAddress);
-        approveAllocation(wallet1, _crowdsaleAddress);
-        approveAllocation(wallet2, _crowdsaleAddress);
-        approveAllocation(wallet3, _crowdsaleAddress);
-        approveAllocation(wallet4, _crowdsaleAddress);
-        approveAllocation(wallet5, _crowdsaleAddress);
-        approveAllocation(wallet6, _crowdsaleAddress);
+        approveAllocation(wallet1presale, _crowdsaleAddress);
+        approveAllocation(wallet2presale, _crowdsaleAddress);
+        approveAllocation(wallet3presale, _crowdsaleAddress);
+        approveAllocation(wallet4presale, _crowdsaleAddress);
+        approveAllocation(wallet5presale, _crowdsaleAddress);
+        approveAllocation(wallet6presale, _crowdsaleAddress);
         approveAllocation(foundersWallet, _crowdsaleAddress);
-        approveAllocation(wallet7, _crowdsaleAddress);
-        approveAllocation(wallet8genesis, _crowdsaleAddress);
-        approveAllocation(wallet9, _crowdsaleAddress);
-        approveAllocation(wallet10, _crowdsaleAddress);
-        approveAllocation(wallet11bounty, _crowdsaleAddress);
-        approveAllocation(wallet12, _crowdsaleAddress);
-        approveAllocation(wallet13rsv, _crowdsaleAddress);
-        approveAllocation(wallet14partners, _crowdsaleAddress);
-        approveAllocation(wallet15lottery, _crowdsaleAddress);
+        approveAllocation(bountyWallet, _crowdsaleAddress);
+        approveAllocation(wallet1bounty, _crowdsaleAddress);
+        approveAllocation(wallet2bounty, _crowdsaleAddress);
+        approveAllocation(wallet3bounty, _crowdsaleAddress);
+        approveAllocation(wallet4bounty, _crowdsaleAddress);
+        approveAllocation(wallet5bounty, _crowdsaleAddress);
+        approveAllocation(wallet6bounty, _crowdsaleAddress);
+        approveAllocation(walletReserve, _crowdsaleAddress);
     }
 
     function approveAllocation(AddressTokenAllocation tokenAllocation, address _crowdsaleAddress) internal {
