@@ -7,7 +7,7 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     /* Public variables of the token */
     string public standard = 'Token 0.1';
     string public name = 'Ivep';
-    string public symbol = 'IVEP';
+    string public symbol = 'DBN';
     uint8 public decimals = 18;
 
     /* Arrays of all balances, vesting, approvals, and approval uses */
@@ -32,7 +32,7 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     mapping (address => bool) private addressAddedToIndex;
 
     /* Miscellaneous */
-    uint256 public totalSupply = 0;
+    uint256 public totalSupply = 0; // Total tokens minted: 1,000,000,000
     bool public transfersEnabled = true;
 
     /**
@@ -40,7 +40,7 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     *
     *  Initializes contract with initial supply tokens to the creator of the contract
     */
-    function TKLNToken() public {
+    function IVEPToken() public {
         owner = msg.sender;
 
         mintToken(presaleWallet);
