@@ -1,4 +1,4 @@
-## Ivep project test plan
+## DBNToken project test plan
 
 ### Test targets
 

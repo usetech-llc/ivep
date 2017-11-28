@@ -1,7 +1,7 @@
-const IvepCrowdsale = artifacts.require('./DBNCrowdsale.sol');
-const IVEPToken = artifacts.require('./DBNToken.sol');
+const DBNCrowdsale = artifacts.require('./DBNCrowdsale.sol');
+const DBNToken = artifacts.require('./DBNToken.sol');
 
-let IvepCrowdsaleStub = artifacts.require('./DBNCrowdsaleStub.sol');
+let DBNCrowdsaleStub = artifacts.require('./DBNCrowdsaleStub.sol');
 const BigNumber = web3.BigNumber;
 require('chai')
   .use(require('chai-as-promised'))
@@ -106,7 +106,7 @@ const crowdsaleParams = {
 };
 //  ------------------------------------------------------------------------------
 
-contract('IvepCrowdsale', function (accounts) {
+contract('DBNCrowdsale', function (accounts) {
   let sut;
   let owner;
   let token;
@@ -119,9 +119,9 @@ contract('IvepCrowdsale', function (accounts) {
 
   describe('Actual values tests', async () => {
     beforeEach(async function () {
-      token = await TKLNToken.new({gas: 10000000});
+      token = await DBNToken.new({gas: 10000000});
 
-      sut = await IvepCrowdsale.new(...sutInitialParams());
+      sut = await DBNCrowdsale.new(...sutInitialParams());
       owner = await sut.owner();
     });
 
@@ -191,9 +191,9 @@ contract('IvepCrowdsale', function (accounts) {
 
   describe('Actual values tests', async () => {
     beforeEach(async function () {
-      token = await TKLNToken.new({gas: 10000000});
+      token = await DBNToken.new({gas: 10000000});
 
-      sut = await IvepCrowdsale.new(...sutInitialParams());
+      sut = await DBNCrowdsale.new(...sutInitialParams());
 
       await token.approveForCrowdsale(sut.address);
     });
@@ -226,9 +226,9 @@ contract('IvepCrowdsale', function (accounts) {
 
   describe('While stage is active', async () => {
     beforeEach(async function () {
-      token = await TKLNToken.new({gas: 10000000});
+      token = await DBNToken.new({gas: 10000000});
 
-      sut = await IvepCrowdsaleStub.new(...sutInitialParams()).should.be.fulfilled;
+      sut = await DBNCrowdsaleStub.new(...sutInitialParams()).should.be.fulfilled;
       owner = await sut.owner().should.be.fulfilled;
 
       await sut.activatePresaleStage().should.be.fulfilled;
@@ -367,8 +367,8 @@ contract('IvepCrowdsale', function (accounts) {
 
         // Reset token and crowdsale if stage goal was reached
         if (reset) {
-          token = await TKLNToken.new({gas: 10000000});
-          sut = await IvepCrowdsaleStub.new(...sutInitialParams()).should.be.fulfilled;
+          token = await DBNToken.new({gas: 10000000});
+          sut = await DBNCrowdsaleStub.new(...sutInitialParams()).should.be.fulfilled;
           owner = await sut.owner().should.be.fulfilled;
           await sut.activatePresaleStage().should.be.fulfilled;
           await token.approveForCrowdsale(sut.address);

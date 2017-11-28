@@ -1,14 +1,14 @@
 require('chai')
   .should();
 
-contract('IVEPToken', function (accounts) {
-  var IVEPToken = artifacts.require('./IVEPTokenStub.sol');
+contract('DBNToken', function (accounts) {
+  var DBNToken = artifacts.require('./DBNTokenStub.sol');
   let sut;
   var userAddress;
 
   beforeEach(async function () {
     // Provide 10M gas for token deployment. As of Nov-16-17, this is 0.001 ETH == $0.30
-    sut = await IVEPToken.new({gas: 10000000});
+    sut = await DBNToken.new({gas: 10000000});
     userAddress = accounts[19];
     console.log('address = ', sut.contract.address);
   });
