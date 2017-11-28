@@ -1,6 +1,6 @@
 pragma solidity ^0.4.15;
 import './Owned.sol';
-import './IVEPToken.sol';
+import './DBNToken.sol';
 
 contract IvepCrowdsale is Owned, CrowdsaleParameters {
     /* ICO Parameters */
