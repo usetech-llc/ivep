@@ -2,7 +2,7 @@ pragma solidity ^0.4.15;
 import './Owned.sol';
 import './DBNToken.sol';
 
-contract IvepCrowdsale is Owned, CrowdsaleParameters {
+contract DBNCrowdsale is Owned, CrowdsaleParameters {
     /* ICO Parameters */
     address private saleWalletAddress;
     uint private tokenMultiplier = 10;
@@ -11,7 +11,7 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
     uint public ICOGoal;
 
     /* Token and records */
-    TKLNToken private token;
+    DBNToken private token;
     uint public totalCollected = 0;
     mapping (address => uint256) private investmentRecords;
 
@@ -29,8 +29,8 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
     *
     * @param _tokenAddress - address of token (deployed before this contract)
     */
-    function IvepCrowdsale(address _tokenAddress) public {
-        token = TKLNToken(_tokenAddress);
+    function DBNCrowdsale(address _tokenAddress) public {
+        token = DBNToken(_tokenAddress);
         tokenMultiplier = tokenMultiplier ** token.decimals();
         saleWalletAddress = CrowdsaleParameters.generalSaleWallet.addr;
 
@@ -172,7 +172,7 @@ contract IvepCrowdsale is Owned, CrowdsaleParameters {
     /**
     *  Default method
     *
-    *  Processes all ETH that it receives and credits TKLN tokens to sender
+    *  Processes all ETH that it receives and credits DBN tokens to sender
     *  according to current stage bonus
     */
     function () external payable {

@@ -74,23 +74,13 @@ contract DBNToken is Owned, CrowdsaleParameters {
     * @param _crowdsaleAddress - crowdsale contract address
     */
     function approveForCrowdsale(address _crowdsaleAddress) public onlyOwner {
-        approveAllocation(preSaleWallet, _crowdsaleAddress);
         approveAllocation(generalSaleWallet, _crowdsaleAddress);
-        approveAllocation(wallet1presale, _crowdsaleAddress);
-        approveAllocation(wallet2presale, _crowdsaleAddress);
-        approveAllocation(wallet3presale, _crowdsaleAddress);
-        approveAllocation(wallet4presale, _crowdsaleAddress);
-        approveAllocation(wallet5presale, _crowdsaleAddress);
-        approveAllocation(wallet6presale, _crowdsaleAddress);
         approveAllocation(foundersWallet, _crowdsaleAddress);
-        approveAllocation(bountyWallet, _crowdsaleAddress);
-        approveAllocation(wallet1bounty, _crowdsaleAddress);
-        approveAllocation(wallet2bounty, _crowdsaleAddress);
-        approveAllocation(wallet3bounty, _crowdsaleAddress);
-        approveAllocation(wallet4bounty, _crowdsaleAddress);
-        approveAllocation(wallet5bounty, _crowdsaleAddress);
-        approveAllocation(wallet6bounty, _crowdsaleAddress);
         approveAllocation(walletReserve, _crowdsaleAddress);
+        approveAllocation(walletAdvisors, _crowdsaleAddress);
+        approveAllocation(walletDubdubTeam, _crowdsaleAddress);
+        approveAllocation(walletBounty, _crowdsaleAddress);
+        approveAllocation(walletAirDrop, _crowdsaleAddress);
     }
 
     function approveAllocation(AddressTokenAllocation tokenAllocation, address _crowdsaleAddress) internal {

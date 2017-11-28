@@ -1,7 +1,7 @@
-const IvepCrowdsale = artifacts.require('./IvepCrowdsale.sol');
-const IVEPToken = artifacts.require('./IVEPToken.sol');
+const IvepCrowdsale = artifacts.require('./DBNCrowdsale.sol');
+const IVEPToken = artifacts.require('./DBNToken.sol');
 
-let IvepCrowdsaleStub = artifacts.require('./IvepCrowdsaleStub.sol');
+let IvepCrowdsaleStub = artifacts.require('./DBNCrowdsaleStub.sol');
 const BigNumber = web3.BigNumber;
 require('chai')
   .use(require('chai-as-promised'))
