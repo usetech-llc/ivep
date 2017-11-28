@@ -2,11 +2,11 @@ pragma solidity ^0.4.15;
 import './Owned.sol';
 import './CrowdsaleParameters.sol';
 
-contract IVEPToken is Owned, CrowdsaleParameters {
+contract DBNToken is Owned, CrowdsaleParameters {
 
     /* Public variables of the token */
     string public standard = 'Token 0.1';
-    string public name = 'Ivep';
+    string public name = 'DBNToken';
     string public symbol = 'DBN';
     uint8 public decimals = 18;
 
@@ -25,7 +25,7 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
     event Issuance(uint256 _amount); // triggered when the total supply is increased
     event Destruction(uint256 _amount); // triggered when the total supply is decreased
-    event NewTKLNToken(address _token);
+    event NewDBNToken(address _token);
 
     /* Unique baker addresses counting feature */
     address[] public addressByIndex;
@@ -40,30 +40,39 @@ contract IVEPToken is Owned, CrowdsaleParameters {
     *
     *  Initializes contract with initial supply tokens to the creator of the contract
     */
-    function IVEPToken() public {
+    function DBNToken() public {
         owner = msg.sender;
 
+        // public sale DNB
         mintToken(generalSaleWallet);
         mintToken(foundersWallet);
         mintToken(walletReserve);
+        mintToken(walletAdvisors);
+        mintToken(walletDubdubTeam);
+        mintToken(walletBounty);
+        mintToken(walletAirDrop);
 
-        mintToken(CrowdsaleParameters.preSaleWallet, 50e7, CrowdsaleParameters.generalSaleEndDate); // 50% on preSale wallet unlocked immediately after ICO ends
+        // Pre-Sale (25%) DBN
+        mintToken(CrowdsaleParameters.preSaleWallet, 24989988, CrowdsaleParameters.preSaleDate1);
+        // Pre-Sale (35%) DBN
+        mintToken(CrowdsaleParameters.preSaleWallet, 36043252, CrowdsaleParameters.preSaleDate2);
+
+        NewDBNToken(address(this));
+
+        /*
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 1 month); // 50%/6 available after ICO end date + 1 month
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 2 month); // 50%/6 available after ICO end date + 1 month
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 3 month); // 50%/6 available after ICO end date + 1 mont
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 4 month); // 50%/6 available after ICO end date + 1 mont
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 5 month); // 50%/6 available after ICO end date + 1 mont
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 50e7 / 6, CrowdsaleParameters.generalSaleEndDate + 6 month); // 50%/6 available after ICO end date + 1 mont
-
-        mintToken(CrowdsaleParameters.bountyWallet, 100e7 * 3333 / 10000, CrowdsaleParameters.generalSaleEndDate); // 33.33% on bounty wallet unlocked immediately after ICO ends
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 1 month); // 66.67%/6 available after ICO end date + 1 month
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 2 month); // 66.67%/6 available after ICO end date + 1 month
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 3 month); // 66.67%/6 available after ICO end date + 1 mont
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 4 month); // 66.67%/6 available after ICO end date + 1 mont
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 5 month); // 66.67%/6 available after ICO end date + 1 mont
         mintToken(CrowdsaleParameters.incentiveReserveAddress, 100e7 * (1 - 3333 / 10000) / 6, CrowdsaleParameters.generalSaleEndDate + 6 month); // 66.67%/6 available after ICO end date + 1 mont
-
-        NewTKLNToken(address(this));
+        */
     }
 
     modifier transfersAllowed {
