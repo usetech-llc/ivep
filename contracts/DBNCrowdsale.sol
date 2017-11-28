@@ -115,7 +115,7 @@ contract DBNCrowdsale is Owned, CrowdsaleParameters {
 
         // Check that stage wallet has enough tokens. If not, sell the rest and
         // return change.
-        address tokenSaleWallet = currentStage == saleWalletAddress;
+        address tokenSaleWallet = saleWalletAddress;
         uint remainingTokenBalance = token.balanceOf(tokenSaleWallet) / tokenMultiplier;
         if (remainingTokenBalance < tokenAmount) {
             tokenAmount = remainingTokenBalance;
