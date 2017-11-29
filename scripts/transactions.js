@@ -19,7 +19,7 @@ const BTCurl = 'https://blockchain.info/address/' + config.btcAddress + '?format
 transactionManager();
 
 async function transactionManager() {
-    // btc.data = await getBTCTransactions(config.btcAddress);
+    btc.data = await getBTCTransactions(config.btcAddress);
     bch.data = await getBCHTransactions(config.btcAddress);
 }
 
