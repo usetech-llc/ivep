@@ -58,6 +58,7 @@ async function getBTCTransactions() {
 
 async function getBCHTransactions() {
     let url = BCHurl + btcOffset;
+    console.log('bch url = ', url);
     try {
         const res = await doRequest(url);
         if (res !== '') {
@@ -67,7 +68,7 @@ async function getBCHTransactions() {
             }
             // save transactions
             if (res.txs) {
-                bch.data.push(res.txs);
+                bch.data = bch.data.concat(res.txs);
             }
             // if we got not all transactions
             if (bch.total >= 1) {
