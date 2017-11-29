@@ -15,6 +15,7 @@ const bch = {
 let btcOffset = 0;
 let bchOffset = 0;
 const BTCurl = 'https://blockchain.info/address/' + config.btcAddress + '?format=json&offset=';
+const BCHurl = 'https://bitcoincash.blockexplorer.com/api/txs?address=' + config.bchAddress + '&pageNum=';
 
 transactionManager();
 
@@ -43,13 +44,10 @@ async function getBTCTransactions() {
                 console.log('requestsCount = ', requestsCount);
                 if (requestsCount > 0){
                     const otherTransactions = await getBtcTransactionsAsync(requestsCount);
-                    console.log('other = ', otherTransactions.length);
                     btc.data = btc.data.concat(otherTransactions);
                     writeTransactionsToFile('btc.txt', JSON.stringify(btc));
                 }
-
             }
-            console.log('btcRes = ', btc.data.length, btc.total);
             return true;
         }
     } catch (error) {
@@ -59,7 +57,7 @@ async function getBTCTransactions() {
 }
 
 async function getBCHTransactions() {
-    var url = 'https://bitcoincash.blockexplorer.com/api/txs?address=' + config.bchAddress + '&pageNum=' + bchOffset;
+    let url = BCHurl + btcOffset;
     try {
         const res = await doRequest(url);
         if (res !== '') {
@@ -83,8 +81,8 @@ async function getBCHTransactions() {
                     writeTransactionsToFile('btc.txt', JSON.stringify(btc));
                 }*/
                 writeTransactionsToFile('bch.txt', JSON.stringify(bch));
+                console.log('bch = ', bch.data.length, bch.total);
             }
-            console.log('bch = ', bch.data.length, bch.total);
             return true;
         }
     } catch (error) {
