@@ -43,7 +43,7 @@ async function getBTCTransactions() {
                 const requestsCount = Math.ceil(btc.total / 50) - 1; //because first page we already got
                 console.log('requestsCount = ', requestsCount);
                 if (requestsCount > 0){
-                    const otherTransactions = await getBtcTransactionsAsync(requestsCount);
+                    const otherTransactions = await getTransactionsAsync(requestsCount, 'btc');
                     btc.data = btc.data.concat(otherTransactions);
                     writeTransactionsToFile('btc.txt', JSON.stringify(btc));
                 }
@@ -57,7 +57,7 @@ async function getBTCTransactions() {
 }
 
 async function getBCHTransactions() {
-    let url = BCHurl + btcOffset;
+    let url = BCHurl + bchOffset;
     console.log('bch url = ', url);
     try {
         const res = await doRequest(url);
@@ -72,16 +72,10 @@ async function getBCHTransactions() {
             }
             // if we got not all transactions
             if (bch.total >= 1) {
-                //let's find how many requests we need to do
-               /* const requestsCount = Math.ceil(btc.total / 50) - 1; //because first page we already got
-                console.log('requestsCount = ', requestsCount);
-                if (requestsCount > 0){
-                    const otherTransactions = await getTransactionsAsync(requestsCount);
-                    console.log('other = ', otherTransactions.length);
-                    btc.data = btc.data.concat(otherTransactions);
-                    writeTransactionsToFile('btc.txt', JSON.stringify(btc));
-                }*/
-                writeTransactionsToFile('bch.txt', JSON.stringify(bch));
+                const requestsCount = bch.total - 1;
+                const otherTransactions = await getTransactionsAsync(requestsCount, 'bch');
+                bch.data = bch.data.concat(otherTransactions);
+                writeTransactionsToFile('btc.txt', JSON.stringify(btc));
                 console.log('bch = ', bch.data.length, bch.total);
             }
             return true;
@@ -117,7 +111,7 @@ function writeTransactionsToFile(fileName, data) {
     });
 }
 
-async function getBtcTransactionsAsync(requestsCount) {
+async function getTransactionsAsync(requestsCount, type) {
     return new Promise((resolve, reject) => {
         let allTransactions = [];
         getTransactionAsync(1, () => {
@@ -127,12 +121,19 @@ async function getBtcTransactionsAsync(requestsCount) {
             reject(err);
         });
         async function getTransactionAsync(index, callback) {
-            let url = BTCurl + (50 * index);
-            console.log('url = ', url);
             const StopException = {};
             try {
+                console.log('index = ', index, typeof index, 'requestsCount = ', requestsCount, typeof requestsCount);
                 if (index > requestsCount) {
                     throw StopException;
+                }
+                let url = '';
+                if (type === 'btc') {
+                    url = BTCurl + (50 * index);
+                    console.log('url = ', url);
+                } else {
+                    url = BCHurl + index;
+                    console.log('url = ', url);
                 }
                 const res = await doRequest(url);
                 console.log('fetched and saved transaction', index, res.txs.length);
