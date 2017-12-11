@@ -1,5 +1,5 @@
 const http = require('http');
-var https = require('https');
+const https = require('https');
 const fs = require("fs");
 const bodyParser = require('body-parser');
 const config = require('./config');
