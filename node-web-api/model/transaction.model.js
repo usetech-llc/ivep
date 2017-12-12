@@ -38,13 +38,13 @@ transactionModel.get = function(skip, limit){
 };
 
 // Get single transaction by its id.
-transactionModel.getOne = function(transactionHash){
+transactionModel.getOne = function(transactionHash, transactionNonce){
   var results = q.defer();
 
-  if(!transactionHash){
-    results.reject({ status:'error', error:'Transaction Hash not supplied.' });
+  if(!transactionHash || !transactionNonce){
+    results.reject({ status:'error', error:'Transaction Hash or Nonve not supplied.' });
   }
-  Transaction.findOne({ _transactionHash: transactionHash }, function(err, dbTransactions) {
+  Transaction.findOne({ hash: transactionHash, nonce: transactionNonce }, function(err, dbTransactions) {
     if (err){
       results.reject(err);
     }
