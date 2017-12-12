@@ -1,7 +1,7 @@
 //fetching all routes files.
-var api = require('./api');
+const api = require('./api');
 
-var routes = function(app){
+const routes = function(app){
   //Initilizing routes
   api(app);
 };

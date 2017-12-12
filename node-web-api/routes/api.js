@@ -1,5 +1,5 @@
-var helpers = require('./../helpers/helperFunctions');
-var transactions = require('./../controller/transaction.controller');
+const helpers = require('./../helpers/helperFunctions');
+const transactions = require('./../controller/transaction.controller');
 
 const routesAPI = function(app) {
 //articles api routes
