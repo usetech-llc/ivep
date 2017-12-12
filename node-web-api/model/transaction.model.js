@@ -12,6 +12,8 @@ const transactionsSchema = new Schema({
   date: { type: Date, default: Date.now },
   amount: Number,
   currency: { type: String, enum: listOfCurrencies, default: listOfCurrencies[0] },
+  hash: String,
+  nonce: Number,
 });
 
 //To use our schema definition, we need to convert our schema into a Model we can work with
@@ -136,6 +138,8 @@ transactionModel.seed = function(data) {
       date: new Date(),
       amount: 100,
       currency: 'BTC',
+      hash: '07e7b291422b17165a4ba32de1e6245b68fa16b8a1d4d443d1b0dc4498e3367b',
+      nonce: 1,
     },
     {
       sender: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf',
@@ -143,6 +147,8 @@ transactionModel.seed = function(data) {
       date: new Date(),
       amount: 200,
       currency: 'ETH',
+      hash: '07e7b291422b17165a4ba32de1e6245b68fa16b8a1d4d443d1b0dc4498e3367b',
+      nonce: 2,
     }
   ];
 
