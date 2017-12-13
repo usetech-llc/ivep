@@ -110,16 +110,16 @@ transactionModel.updateOne = function(transaction) {
 };
 
 //delete transaction
-transactionModel.delete = function(transactionHash){
+transactionModel.delete = function(transactionId){
   var results = q.defer();
   var error = false;
-  if(!transactionHash){
+  if(!transactionId){
     results.reject({ status:'error', error:error });
     error = true;
   }
   if(!error){
-    console.log(transactionHash);
-    Transaction.findOne({ _transactionHash:transactionHash }, function(err, dbTransaction) {
+    console.log(transactionId);
+    Transaction.findOne({ _id:transactionId }, function(err, dbTransaction) {
       if (err){
         results.reject(err);
       }

@@ -1,5 +1,5 @@
+const url = require('url');
 const transactionModel = require('./../model/transaction.model');
-
 const transactions = {};
 
 // controller that handles transactions listings.
@@ -23,8 +23,8 @@ transactions.getTransactions = function(req, res) {
 
 // controller that handles single transaction.
 transactions.getOneTransaction = function (req, res) {
-  const transactionId = req.query.transactionId;
-  console.log('req', req, 'transactionId = ', transactionId);
+  const transactionId = req.params.transactionId;
+  console.log('transactionId = ', transactionId);
   const transactionsData = transactionModel.getOne(transactionId);
   return transactionsData.then((data) =>{
     const response = {};
@@ -69,9 +69,9 @@ transactions.updateOneTransaction = function(req, res){
 };
 
 // controller that delete single transaction.
-transactions.deleteOneTransaction = function(transactionId){
+transactions.deleteOneTransaction = function(req, res){
   const transactionId = req.query.transactionId;
-  const transactionsData = transactionModel.delete(transactionHash);
+  const transactionsData = transactionModel.delete(transactionId);
   return transactionsData.then((data) => {
     var response = {};
     response.status = 'success';
