@@ -6,96 +6,96 @@ const Schema = mongoose.Schema;
 
 const listOfCurrencies = ["BTC", "BCH", "LTC", "ETH", "USD", "CAD"];
 
-const walletsSchema = new Schema({
+const walletSchema = new Schema({
   address: String,
   currency: { type: String, enum: listOfCurrencies, default: listOfCurrencies[0] },
 });
 
 //To use our schema definition, we need to convert our schema into a Model we can work with
-const Transaction = mongoose.model('transactions', transactionsSchema);
+const Wallet = mongoose.model('wallets', walletSchema);
 
 //Initlizing interface object of this model.
-const transactionModel = {};
+const walletModel = {};
 
-//function to get transactions listings
-transactionModel.get = function(skip, limit){
+//function to get wallets listings
+walletModel.get = function(skip, limit){
   var results = q.defer();
   skip = parseInt(skip) || 0;
   limit = parseInt(limit) || 999999999;
-  console.log('transactionModel');
-  Transaction.find({}, function(err, dbTransaction) {
+  console.log('walletModel');
+  Wallet.find({}, function(err, dbWallet) {
     if (err){
       results.reject(err);
     }
-    results.resolve(dbTransaction);
+    results.resolve(dbWallet);
   }).skip(skip).limit(limit);
   return results.promise;
 };
 
-// Get single transaction by its id.
-transactionModel.getOne = function(transactionHash, transactionNonce){
+// Get single wallet by its address.
+walletModel.getOne = function(address){
   var results = q.defer();
 
-  if(!transactionHash || !transactionNonce){
-    results.reject({ status:'error', error:'Transaction Hash or Nonve not supplied.' });
+  if(!address){
+    results.reject({ status:'error', error:'Wallet address not supplied.' });
   }
-  Transaction.findOne({ hash: transactionHash, nonce: transactionNonce }, function(err, dbTransactions) {
+  Wallet.findOne({ address: address }, function(err, dbWallet) {
     if (err){
       results.reject(err);
     }
 
-    if(dbTransactions){
-      results.resolve(dbTransactions);
+    if(dbWallet){
+      results.resolve(dbWallet);
     } else{
-      results.reject({status:'error', error:'Invalid transaction hash supplied.'});
+      results.reject({status:'error', error:'Invalid wallet address supplied.'});
     }
   });
   return results.promise;
 };
 
-// Insert transaction into database
-transactionModel.insertOne = function(transaction){
+// Insert wallet into database
+walletModel.insertOne = function(wallet){
   var results = q.defer();
-  var error = checkInputError(transaction);
+  var error = checkInputError(wallet);
   if(error){
     results.reject({ status:'error', error:error });
   }
-  var transactions = [];
-  // Insert transaction
+  var wallets = [];
+  // Insert wallets
   if(!error){
-    transactions.push(transaction);
-    Transaction.collection.insert(transactions, function(err, dbTransaction) {
+    wallets.push(wallet);
+    Wallet.collection.insert(wallets, function(err, dbWallet) {
       if(err){
         console.log('error occured in populating database');
         console.log(err);
       }
       else{
-        // console.log('transaction inserted');
-        results.resolve(dbTransaction);
+        // console.log('wallet inserted');
+        results.resolve(dbWallet);
       }
     });
   }
   return results.promise;
 };
 
-// update transaction
-transactionModel.updateOne = function(transaction) {
+// update wallets
+walletModel.updateOne = function(wallet) {
   var results = q.defer();
-  var error = checkInputError(transaction);
+  var error = checkInputError(wallet);
 
   if(error){
     results.reject({ status:'error', error:error });
   }
 
-  // find and update transaction
+  // find and update wallet
   if(!error) {
-    Transaction.findOne({ _transactionHash: transaction._transactionHash}, function (err, dbTransaction) {
+    Wallet.findOne({ address: wallet.address}, function (err, dbWallet) {
       if (err) {
         return results.reject(err);
       }
-      for (let k in transaction) dbTransaction[k] = transaction[k];
-      dbTransaction.save();
-      results.resolve(dbTransaction);
+      for (let k in dbWallet) dbWallet[k] = dbWallet[k];
+      dbWallet.save();
+      results.resolve(dbWallet);
     });
   }
   else{
@@ -104,64 +104,54 @@ transactionModel.updateOne = function(transaction) {
   return results.promise;
 };
 
-//delete transaction
-transactionModel.delete = function(transactionHash){
+//delete wallet
+walletModel.delete = function(address){
   var results = q.defer();
   var error = false;
-  if(!transactionHash){
+  if(!address){
     results.reject({ status:'error', error:error });
     error = true;
   }
   if(!error){
-    console.log(transactionHash);
-    Transaction.findOne({ _transactionHash:transactionHash }, function(err, dbTransaction) {
+    console.log(address);
+    Wallet.findOne({ address:address }, function(err, dbWallet) {
       if (err){
         results.reject(err);
       }
-      dbTransaction.remove();
-      results.resolve(dbTransaction);
+      dbWallet.remove();
+      results.resolve(dbWallet);
     });
   }
   return results.promise;
 };
 
-transactionModel.seed = function(data) {
-  const transactions = [
+walletModel.seed = function(data) {
+  const wallets = [
     {
-      sender: '0xb794F5eA0ba39494cE839613fffBA74279579268',
-      receiver: '0xF432cEc23b2A0d6062B969467f65669De81F4653',
-      date: new Date(),
-      amount: 100,
+      address: '0xb794F5eA0ba39494cE839613fffBA74279579268',
       currency: 'BTC',
-      hash: '07e7b291422b17165a4ba32de1e6245b68fa16b8a1d4d443d1b0dc4498e3367b',
-      nonce: 1,
     },
     {
-      sender: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf',
-      receiver: '0xdf6ef343350780bf8c3410bf062e0c015b1dd671',
-      date: new Date(),
-      amount: 200,
+      address: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf',
       currency: 'ETH',
-      hash: '07e7b291422b17165a4ba32de1e6245b68fa16b8a1d4d443d1b0dc4498e3367b',
-      nonce: 2,
     }
   ];
 
-  Transaction.collection.insert(transactions, function(err, dbTransactions) {
+  walletModel.collection.insert(wallets, function(err, dbWallets) {
     if(err){
       console.log('error occured in populating database');
       console.log(err);
     }
     else{
-      console.log('Transactions table populated.', dbTransactions.length);
+      console.log('Wallets table populated.', dbWallets.length);
     }
   });
 };
 
 //check input validation
-function checkInputError(transaction) {
+function checkInputError(wallet) {
   return false;
 }
 
 
-module.exports = transactionModel;
+module.exports = walletModel;
