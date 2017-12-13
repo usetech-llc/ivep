@@ -1,20 +1,21 @@
 let env = require('dotenv').config()
 env = require('dotenv-parse-variables')(env.parsed)
 const commandLineArgs = require('command-line-args')(require('./option-definitions'))
-const CoinbaseClient = require('./CoinbaseClient')
+const CoinbaseClient = require('./coinbase-client')
 
-async function main() {
-    const c1 = new CoinbaseClient(env.COINBASE_API_BASE_URL, env.COINBASE_API_KEY, env.COINBASE_API_SECRET)
-    const response = await c1.getExchangeRates("BTC")
-
-    const result = Object.keys(response.data.rates).reduce(function(obj, key) {
+function filterRates(rates) {
+    return Object.keys(rates).reduce(function(obj, key) {
         if(env.DISPLAY_RATES_FOR.some((c) => c === key))
-            obj[key] = parseFloat(response.data.rates[key]);
+            obj[key] = parseFloat(rates[key]);
 
         return obj
         }, {})
+}
 
-    console.log(result)
+async function main() {
+    const c1 = new CoinbaseClient(env.COINBASE_API_BASE_URL, env.COINBASE_API_KEY, env.COINBASE_API_SECRET)
+
+    console.log(filterRates((await c1.getExchangeRates(commandLineArgs.currency)).data.rates))
 }
 
 main()
