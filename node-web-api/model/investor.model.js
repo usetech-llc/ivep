@@ -4,19 +4,19 @@ var path = require("path");
 
 const Schema = mongoose.Schema;
 
-const investorsSchema = new Schema({
-  wallets: [Wallet],
-  transactions: [Transaction],
+const investorSchema = new Schema({
+  wallets: [{type: Schema.Types.ObjectId, ref: 'Wallet'}],
+  transactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
 });
 
 //To use our schema definition, we need to convert our schema into a Model we can work with
-const Investor = mongoose.model('investors', investorsSchema);
+const Investor = mongoose.model('investor', investorSchema);
 
 //Initlizing interface object of this model.
-const investorsModel = {};
+const investorModel = {};
 
 //function to get Investor listings
-investorsModel.get = function(skip, limit){
+investorModel.get = function(skip, limit){
   var results = q.defer();
   skip = parseInt(skip) || 0;
   limit = parseInt(limit) || 999999999;
@@ -31,7 +31,7 @@ investorsModel.get = function(skip, limit){
 };
 
 // Get single Investor by its id.
-investorsModel.getOne = function(investorId){
+investorModel.getOne = function(investorId){
   var results = q.defer();
 
   if(!investorId){
@@ -52,7 +52,7 @@ investorsModel.getOne = function(investorId){
 };
 
 // Insert investor into database
-investorsModel.insertOne = function(investor){
+investorModel.insertOne = function(investor){
   var results = q.defer();
   var error = checkInputError(investor);
   if(error){
@@ -77,7 +77,7 @@ investorsModel.insertOne = function(investor){
 };
 
 // update investor
-investorsModel.updateOne = function(investor) {
+investorModel.updateOne = function(investor) {
   var results = q.defer();
   var error = checkInputError(investor);
   if(error){
@@ -101,7 +101,7 @@ investorsModel.updateOne = function(investor) {
 };
 
 //delete investor
-investorsModel.delete = function(investorId){
+investorModel.delete = function(investorId){
   var results = q.defer();
   var error = false;
   if(!investorId){
@@ -121,7 +121,7 @@ investorsModel.delete = function(investorId){
   return results.promise;
 };
 
-investorsModel.seed = function(data) {
+investorModel.seed = function(data) {
   const investors = [
     {
       sender: '0xb794F5eA0ba39494cE839613fffBA74279579268',
@@ -160,4 +160,4 @@ function checkInputError(investor) {
 }
 
 
-module.exports = investorsModel;
+module.exports = investorModel;
