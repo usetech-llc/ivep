@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 const listOfCurrencies = ["BTC", "BCH", "LTC", "ETH", "USD", "CAD"];
 
 const investorSchema = new Schema({
+  _id: String,
   wallets: [{  _id: String, address: String, currency: { type: String, enum: listOfCurrencies } }],
   transactions: [
     {
@@ -134,9 +135,11 @@ investorModel.delete = function(investorId){
 investorModel.seed = function(data) {
   const investors = [
     {
+      _id: '1',
       wallets: [{ _id: '1', address: '0xb794F5eA0ba39494cE839613fffBA74279579268', currency: 'BTC' }],
       transactions: [
         {
+          _id: '1',
           sender: '0xb794F5eA0ba39494cE839613fffBA74279579268',
           receiver: '0xF432cEc23b2A0d6062B969467f65669De81F4653',
           date: new Date(),
@@ -146,9 +149,11 @@ investorModel.seed = function(data) {
       ],
     },
     {
+      _id: '2',
       wallets: [{ _id: '2', address: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf', currency: 'ETH' }],
       transactions: [
         {
+          _id: '2',
           sender: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf',
           receiver: '0xdf6ef343350780bf8c3410bf062e0c015b1dd671',
           date: new Date(),

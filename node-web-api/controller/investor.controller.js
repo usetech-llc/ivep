@@ -3,7 +3,7 @@ const investorModel = require('./../model/investor.model');
 const investor = {};
 
 // controller that handles investor listings.
-investor.getInvestor = function(req, res) {
+investor.getInvestors = function(req, res) {
   const skip = req.query.skip;
   const limit = req.query.limit;
   console.log('controller');
@@ -30,6 +30,7 @@ investor.getOneInvestor = function (req, res) {
     const response = {};
     response.status = 'success';
     response.data = data;
+    res.send(response);
   }, (err) => {
     console.log('error while getting investor by hash', err);
     res.status(400);
@@ -76,6 +77,7 @@ investor.deleteOneInvestor = function(req, res){
     var response = {};
     response.status = 'success';
     response.data = data;
+    res.send(response);
   }, (err) => {
     console.log('error while deleting investor', err);
     res.status(400);

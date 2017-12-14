@@ -49,6 +49,7 @@ transactionModel.getOne = function(transactionId){
     }
 
     if(dbTransactions){
+      console.log('dbTransactions = ',dbTransactions);
       results.resolve(dbTransactions);
     } else{
       results.reject({status:'error', error:'Invalid transaction hash supplied.'});

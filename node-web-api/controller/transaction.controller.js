@@ -30,6 +30,7 @@ transactions.getOneTransaction = function (req, res) {
     const response = {};
     response.status = 'success';
     response.data = data;
+    res.send(response);
   }, (err) => {
     console.log('error while getting transaction by hash', err);
     res.status(400);
@@ -76,6 +77,7 @@ transactions.deleteOneTransaction = function(req, res){
     var response = {};
     response.status = 'success';
     response.data = data;
+    res.send(response);
   }, (err) => {
     console.log('error while deleting transaction', err);
     res.status(400);
