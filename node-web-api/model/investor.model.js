@@ -3,10 +3,20 @@ var q = require('q');
 var path = require("path");
 
 const Schema = mongoose.Schema;
+const listOfCurrencies = ["BTC", "BCH", "LTC", "ETH", "USD", "CAD"];
 
 const investorSchema = new Schema({
-  wallets: [{type: Schema.Types.ObjectId, ref: 'Wallet'}],
-  transactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
+  wallets: [{  _id: String, address: String, currency: { type: String, enum: listOfCurrencies } }],
+  transactions: [
+    {
+      _id: String,
+      sender: String,
+      receiver: String,
+      date: { type: Date, default: Date.now },
+      amount: Number,
+      currency: { type: String, enum: listOfCurrencies },
+    }
+  ],
 });
 
 //To use our schema definition, we need to convert our schema into a Model we can work with
@@ -124,23 +134,29 @@ investorModel.delete = function(investorId){
 investorModel.seed = function(data) {
   const investors = [
     {
-      sender: '0xb794F5eA0ba39494cE839613fffBA74279579268',
-      receiver: '0xF432cEc23b2A0d6062B969467f65669De81F4653',
-      date: new Date(),
-      amount: 100,
-      currency: 'BTC',
-      hash: '07e7b291422b17165a4ba32de1e6245b68fa16b8a1d4d443d1b0dc4498e3367b',
-      nonce: 1,
+      wallets: [{ _id: '1', address: '0xb794F5eA0ba39494cE839613fffBA74279579268', currency: 'BTC' }],
+      transactions: [
+        {
+          sender: '0xb794F5eA0ba39494cE839613fffBA74279579268',
+          receiver: '0xF432cEc23b2A0d6062B969467f65669De81F4653',
+          date: new Date(),
+          amount: 100,
+          currency: 'BTC',
+        }
+      ],
     },
     {
-      sender: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf',
-      receiver: '0xdf6ef343350780bf8c3410bf062e0c015b1dd671',
-      date: new Date(),
-      amount: 200,
-      currency: 'ETH',
-      hash: '07e7b291422b17165a4ba32de1e6245b68fa16b8a1d4d443d1b0dc4498e3367b',
-      nonce: 2,
-    }
+      wallets: [{ _id: '2', address: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf', currency: 'ETH' }],
+      transactions: [
+        {
+          sender: '0xe50365f5d679cb98a1dd62d6f6e58e59321bcddf',
+          receiver: '0xdf6ef343350780bf8c3410bf062e0c015b1dd671',
+          date: new Date(),
+          amount: 200,
+          currency: 'ETH',
+        }
+      ],
+    },
   ];
 
   Investor.collection.insert(investors, function(err, dbInvestors) {
