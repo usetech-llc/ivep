@@ -1,0 +1,202 @@
+/* 1 */
+[
+    {
+        "name" : "investors",
+        "type" : "collection",
+        "options" : {
+            "validator" : {
+                "$and" : [ 
+                    {
+                        "_id" : {
+                            "$type" : "string",
+                            "$exists" : true
+                        }
+                    }, 
+                    {
+                        "wallets" : {
+                            "$type" : "array",
+                            "$exists" : true,
+                            "$elemMatch" : {
+                                "address" : {
+                                    "$type" : "string",
+                                    "$regex" : ".+"
+                                },
+                                "currency" : {
+                                    "$type" : "string",
+                                    "$in" : [ 
+                                        "BTC", 
+                                        "BCH", 
+                                        "LTC", 
+                                        "ETH", 
+                                        "USD", 
+                                        "CAD"
+                                    ]
+                                }
+                            }
+                        }
+                    }, 
+                    {
+                        "transactions" : {
+                            "$type" : "array",
+                            "$exists" : true,
+                            "$elemMatch" : {
+                                "sender" : {
+                                    "$type" : "string",
+                                    "$regex" : ".+"
+                                },
+                                "receiver" : {
+                                    "$type" : "string",
+                                    "$regex" : ".+"
+                                },
+                                "date" : {
+                                    "$type" : "date",
+                                    "$exists" : true
+                                },
+                                "amount" : {
+                                    "$type" : "long",
+                                    "$gt" : 0
+                                },
+                                "currency" : {
+                                    "$type" : "string",
+                                    "$in" : [ 
+                                        "BTC", 
+                                        "BCH", 
+                                        "LTC", 
+                                        "ETH", 
+                                        "USD", 
+                                        "CAD"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "validationLevel" : "strict",
+            "validationAction" : "error"
+        },
+        "info" : {
+            "readOnly" : false,
+            "uuid" : UUID("8c85ffad-5bb0-4517-868d-4d4854f5c6e8")
+        },
+        "idIndex" : {
+            "v" : 2,
+            "key" : {
+                "_id" : 1
+            },
+            "name" : "_id_",
+            "ns" : "ivep.investors"
+        }
+    },
+    {
+        "name" : "currencies",
+        "type" : "collection",
+        "options" : {
+            "validator" : {
+                "$and" : [ 
+                    {
+                        "_id" : {
+                            "$type" : "string",
+                            "$exists" : true,
+                            "$in" : [ 
+                                "BTC", 
+                                "BCH", 
+                                "LTC", 
+                                "ETH", 
+                                "USD", 
+                                "CAD"
+                            ]
+                        }
+                    }, 
+                    {
+                        "last_sync_timestamp" : {
+                            "$type" : "string",
+                            "$exists" : true
+                        }
+                    }, 
+                    {
+                        "last_sync_date" : {
+                            "$type" : "string",
+                            "$exists" : true
+                        }
+                    }
+                ]
+            },
+            "validationLevel" : "strict",
+            "validationAction" : "error"
+        },
+        "info" : {
+            "readOnly" : false,
+            "uuid" : UUID("17c11112-a6a6-423d-8903-335b3c4f02b6")
+        },
+        "idIndex" : {
+            "v" : 2,
+            "key" : {
+                "_id" : 1
+            },
+            "name" : "_id_",
+            "ns" : "ivep.currencies"
+        }
+    },
+    {
+        "name" : "transactions",
+        "type" : "collection",
+        "options" : {
+            "validator" : {
+                "$and" : [ 
+                    {
+                        "_id" : {
+                            "$type" : "string",
+                            "$exists" : true
+                        }
+                    }, 
+                    {
+                        "sender_address" : {
+                            "$type" : "string",
+                            "$exists" : true
+                        }
+                    }, 
+                    {
+                        "timestamp" : {
+                            "$type" : "string",
+                            "$exists" : true
+                        }
+                    }, 
+                    {
+                        "currency" : {
+                            "$type" : "string",
+                            "$exists" : true,
+                            "$in" : [ 
+                                "BTC", 
+                                "BCH", 
+                                "LTC", 
+                                "ETH", 
+                                "USD", 
+                                "CAD"
+                            ]
+                        }
+                    }, 
+                    {
+                        "raw_data" : {
+                            "$exists" : true
+                        }
+                    }
+                ]
+            },
+            "validationLevel" : "strict",
+            "validationAction" : "error"
+        },
+        "info" : {
+            "readOnly" : false,
+            "uuid" : UUID("193f312f-9e63-465c-8ea5-ea67055c3a02")
+        },
+        "idIndex" : {
+            "v" : 2,
+            "key" : {
+                "_id" : 1
+            },
+            "name" : "_id_",
+            "ns" : "ivep.transactions"
+        }
+    }
+]
