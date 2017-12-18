@@ -1,5 +1,14 @@
+const mongoose = require('mongoose');
 const config = require('./config');
 var bc = require('./blockchain-api');
+const bcModel = require('./blockchainstatus.model');
+
+// mongo db connection
+const db = mongoose.connection;
+db.on('error', console.error);
+const connectionString = 'mongodb://' + config.dbHost + ':' + config.dbPort + '/' + config.dbName;
+mongoose.connect(connectionString, { useMongoClient: true });
+mongoose.Promise = global.Promise;
 
 
 async function DownloadBTC() {
@@ -29,7 +38,15 @@ async function DownloadLTC() {
 
 async function main() {
     try {
-        await DownloadLTC();
+
+        var record = {netid: 'LTC', lastItem: '123'};
+
+        await bcModel.insertOne(record);
+        var test = await bcModel.get('LTC');
+        console.out("test = " + test);
+
+
+        //await DownloadLTC();
 
     } catch (error) {
         console.log("Exception: ", error);

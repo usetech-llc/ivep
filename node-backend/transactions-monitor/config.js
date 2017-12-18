@@ -14,3 +14,8 @@ define('dbName', 'blockchain');
 // For reading LTC blockchain
 define('ltcAddress', 'LVXXmgcVYBZAuiJM3V99uG48o3yG89h2Ph');
 define('blockIoApiKeyLTC', 'fa53-c534-f369-9108');
+
+
+define('dbHost', 'localhost');
+define('dbPort', '27017');
+define('dbName', 'blockchain');
