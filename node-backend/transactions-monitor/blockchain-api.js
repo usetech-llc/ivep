@@ -1,5 +1,6 @@
 const http = require('http');
 const https = require('https');
+const delay = require('delay');
 
 //export { default as getBTCTransactions };
 exports.getBTCTransactionCount = async function (addr) {
@@ -21,8 +22,6 @@ exports.getLTCTransactions = async function (addr, beforeTxHash, apiKey) {
 const btcBaseUrl = 'https://blockchain.info/rawaddr/';
 const bchBaseUrl = 'https://bitcoincash.blockexplorer.com/api/txs';
 const ltcBaseUrl = 'https://block.io/api/v2/get_transactions/';
-
-// TODO: Handle this error (plain text response): "Maximum concurrent requests for this endpoint reached. Please try again shortly."
 
 /**
 * Return total transaction count for a given BTC address
@@ -66,8 +65,25 @@ async function getBTCTransactions(addr, offset, limit) {
     let url = btcBaseUrl + addr + '?format=json&offset=' + offset + '&limit=' + limit;
     let retArray = [];
     var index = 0;
+    const res = '';
+    var requestFinished = false;
 
-    const res = await doRequest(url);
+    while (!requestFinished) {
+        try {
+            res = await doRequest(url);
+            requestFinished = true;
+        } catch (e) {
+            if (e.toString().indexOf("Maximum concurrent requests for this endpoint reached.") != -1) {
+                // Delay and repeat
+                console.log('Maximum concurrent requests for this endpoint reached... Waiting 5 seconds...');
+                await delay(5000);
+                console.log('Continue');
+            } else {
+                requestFinished = true; // failure
+            }
+        }
+    }
+
     if (res != '') {
         // Parse transactions
         if (res.txs) {
@@ -206,8 +222,6 @@ async function getBCHTransactions(addr, page) {
 async function getLTCTransactions(addr, apiKey, beforeTxHash) {
     let url = ltcBaseUrl + '?api_key=' + apiKey + '&type=received&addresses=' + addr + (typeof beforeTxHash === "undefined" ? '' : '&before_tx=' + beforeTxHash);
 
-    throw new Error('Test.');
-
     let retArray = [];
     var index = 0;
 
@@ -239,12 +253,15 @@ async function getLTCTransactions(addr, apiKey, beforeTxHash) {
                 }
             }
         }
+
+        // bloc.io free account only allows 3 requests per second
+        await delay(334);
+
         return retArray;
     }
 
     throw new Error('Request error: Empty response');
 }
-
 
 function doRequest(url) {
     return new Promise((resolve, reject) => {
@@ -254,7 +271,12 @@ function doRequest(url) {
                 response += chunk;
             });
             res.on('end', () => {
-                resolve(JSON.parse(response));
+                try {
+                    resolve(JSON.parse(response));
+                } catch (e) {
+                    reject(e);
+                }
+
             });
             req.end();
             req.on('error', err => {

@@ -5,12 +5,14 @@ var path = require("path");
 const Schema = mongoose.Schema;
 
 const blockchainStatusDataModel = {
-    netid: '', // Blockchain ID (BTC. BCH, LTC, ETH, ...)
+    _id: '', // Blockchain ID (BTC. BCH, LTC, ETH, ...)
+    totalItems: '', // Total items if known (pages, transactions, etc...)
     lastItem: '', // Id of last item read (page, txid, tx number, etc...)
 };
 
 const blockchainStatusSchema = new Schema({
-    netid: String,
+    _id: String,
+    totalItems: String,
     lastItem: String,
 });
 
@@ -22,24 +24,30 @@ const BlockchainStatus = mongoose.model('blockchainstatus', blockchainStatusSche
 const blockchainStatusModel = {};
 
 //function to get blockchain status
-blockchainStatusModel.get = function(networkId) {
+blockchainStatusModel.get = function(id) {
     var results = q.defer();
-    BlockchainStatus.find({}, function(err, bcRecord) {
+    BlockchainStatus.find({_id: id}, function(err, bcRecords) {
         if (err) {
             results.reject(err);
+        } else {
+            if (bcRecords.length > 0) {
+                results.resolve(bcRecords[0]);
+            } else {
+                results.resolve(false);
+            }
         }
-        results.resolve(bcRecord);
+
     });
     return results.promise;
 };
 
 // Insert blockchain status into database
-blockchainStatusModel.insertOne = function(bcRecord) {
+blockchainStatusModel.set = function(bcRecord) {
     var results = q.defer();
     var recordsToInsert = [];
     // Insert record
     recordsToInsert.push(bcRecord);
-    BlockchainStatus.collection.insert(recordsToInsert, function(err, bcRecord) {
+    BlockchainStatus.collection.update({_id: bcRecord._id}, bcRecord, {upsert: true}, function(err, bcRecord) {
         if(err) {
             console.log('error in blockchainStatusModel.insertOne');
             console.log(err);

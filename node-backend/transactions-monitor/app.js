@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const config = require('./config');
 var bc = require('./blockchain-api');
 const bcModel = require('./blockchainstatus.model');
+const txModel = require('./blockchainstatus.model');
+
 
 // mongo db connection
 const db = mongoose.connection;
@@ -11,48 +13,182 @@ mongoose.connect(connectionString, { useMongoClient: true });
 mongoose.Promise = global.Promise;
 
 
-async function DownloadBTC() {
-    var btcTxCount = await bc.getBTCTransactionCount(config.btcAddress);
+async function DownloadBTCTask(addr) {
+    // Get last reading status
+    var status = await bcModel.get('BTC' + addr);
+    var btcTxCount = await bc.getBTCTransactionCount(addr);
+    var lastItem = 0;
+
+    if (status === false) {
+        // First time for this address
+        var statusUpdate = {_id: 'BTC' + addr, totalItems: btcTxCount, lastItem: '0'};
+        await bcModel.set(statusUpdate);
+    } else {
+        lastItem = parseInt(status.lastItem);
+    }
     console.log("BTC Transaction count: " + btcTxCount);
 
-    var transactions = await bc.getBTCTransactions(config.btcAddress, 0, 10);
+    var skip = lastItem;
+    var limit = 10;
+    var failCount = 0;
+
+    while (skip < btcTxCount) {
+        console.log("Reading from " + skip + " to " + (skip+10));
+
+        try {
+            // Read a batch of transactions
+            var transactions = await bc.getBTCTransactions(addr, skip, limit);
+
+            // Save to DB
+
+
+
+
+            // Update status
+            lastItem += limit;
+            skip = lastItem;
+            var statusUpdate = {_id: 'BTC' + addr, totalItems: btcTxCount, lastItem: lastItem.toString()};
+            await bcModel.set(statusUpdate);
+        } catch (e) {
+            failCount++;
+        }
+
+        if (failCount > 10) return;
+    }
+
+    console.log("BTC up to date for address: " + addr);
 }
 
-async function DownloadBCH() {
-    var bchTxCount = await bc.getBCHPageCount(config.bchAddress);
-    console.log("BCH Page count: " + bchTxCount);
+async function DownloadBCHTask(addr) {
+    // Get last reading status
+    var status = await bcModel.get('BCH' + addr);
+    var totalPageCount = await bc.getBCHPageCount(addr);
+    var lastItem = 0;
 
-    var transactions = await bc.getBCHTransactions(config.bchAddress, 0);
-    console.log("Downloaded transactions: " + transactions.length);
+    if (status === false) {
+        // First time for this address
+        var statusUpdate = {_id: 'BCH' + addr, totalItems: totalPageCount, lastItem: '0'};
+        await bcModel.set(statusUpdate);
+        console.log("BCH initial status set");
+    } else {
+        lastItem = parseInt(status.lastItem);
+        console.log("BCH lastItem = " + lastItem);
+    }
+    console.log("BCH Page count: " + totalPageCount);
+
+    var page = lastItem;
+    var failCount = 0;
+
+    while (page < totalPageCount) {
+        console.log("Reading page " + page);
+
+        try {
+            // Read a batch of transactions
+            var transactions = await bc.getBCHTransactions(addr, page);
+
+            // Save to DB
+
+
+
+            // Update status
+            page += 1;
+            var statusUpdate = {_id: 'BCH' + addr, totalItems: totalPageCount, lastItem: page.toString()};
+            await bcModel.set(statusUpdate);
+        } catch (e) {
+            failCount++;
+        }
+
+        if (failCount > 10) return;
+    }
+
+    console.log("BCH up to date for address: " + addr);
 }
 
-async function DownloadLTC() {
-    var transactions = await bc.getLTCTransactions(config.ltcAddress, config.blockIoApiKeyLTC);
-    console.log("LTC Transaction count: ", transactions.length);
+
+/**
+* Read all (new) LTC transactions to an address
+*
+* Because block.io only allows reading transactions _before_ a transaction hash, i.e.
+* older than certain transaction, fragmets of new transactions may remain unread, so
+* the best approach is to read all transactions and check which ones are in the DB
+* to avoid duplicates
+*
+* @param addr - address to query
+*/
+async function DownloadLTCTask(addr) {
+    // Get last reading status
+    var status = await bcModel.get('LTC' + addr);
+    var lastItem = 0;
+
+    if (status === false) {
+        // First time for this address
+        var statusUpdate = {_id: 'LTC' + addr, totalItems: 0, lastItem: ''};
+        await bcModel.set(statusUpdate);
+        console.log("LTC initial status set");
+    } else {
+        lastItem = status.lastItem;
+        console.log("LTC lastItem = " + lastItem);
+    }
+
+    var failCount = 0;
+
+    var lastReadTransactions = 2; // Last is always read, so lastReadTransactions will be euqual to 1 after the last iteration
+    while (lastReadTransactions > 1) {
+        console.log("Reading transactions before " + lastItem);
+
+        try {
+            // Read a batch of transactions
+            var transactions = [];
+            if (lastItem.length > 0) {
+                transactions = await bc.getLTCTransactions(addr, config.blockIoApiKeyLTC, lastItem);
+            } else {
+                transactions = await bc.getLTCTransactions(addr, config.blockIoApiKeyLTC);
+            }
+            lastReadTransactions = transactions.length;
+
+            console.log("LTC lastReadTransactions = " + lastReadTransactions);
+
+            // Save to DB
+
+
+
+
+            // Update status
+            var statusUpdate = {_id: 'LTC' + addr, totalItems: 0, lastItem: lastItem};
+            if (transactions.length > 0) {
+                lastItem = transactions[transactions.length-1].hash;
+                statusUpdate.lastItem = transactions[transactions.length-1].hash;
+            }
+
+            // If we are at the end, start over next time. See the comment in the method description
+            if (lastReadTransactions == 1) {
+                statusUpdate.lastItem = '';
+            }
+            await bcModel.set(statusUpdate);
+        } catch (e) {
+            failCount++;
+            console.log("Error, increasing fail count");
+        }
+
+        if (failCount > 10) return;
+    }
+
+    console.log("LTC up to date for address: " + addr);
+
+
 }
-
-
-
-//DownloadBTC();
-//DownloadBCH();
 
 async function main() {
     try {
-
-        var record = {netid: 'LTC', lastItem: '123'};
-
-        await bcModel.insertOne(record);
-        var test = await bcModel.get('LTC');
-        console.out("test = " + test);
-
-
-        //await DownloadLTC();
-
+        await DownloadBTCTask(config.btcAddress);
+        await DownloadBCHTask(config.bchAddress);
+        await DownloadLTCTask(config.ltcAddress);
     } catch (error) {
         console.log("Exception: ", error);
     }
 
     console.log("Happy path output");
+    process.exit();
 }
 
 main();
