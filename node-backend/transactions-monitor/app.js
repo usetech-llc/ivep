@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 const config = require('./config');
 var bc = require('./blockchain-api');
 const bcModel = require('./blockchainstatus.model');
-const txModel = require('./blockchainstatus.model');
 
+// TODO: Fix this import
+//const txModel = require('./../../node-web-api/model/transaction.model');
+const txModel = require('./transaction.model');
 
 // mongo db connection
 const db = mongoose.connection;
@@ -11,6 +13,20 @@ db.on('error', console.error);
 const connectionString = 'mongodb://' + config.dbHost + ':' + config.dbPort + '/' + config.dbName;
 mongoose.connect(connectionString, { useMongoClient: true });
 mongoose.Promise = global.Promise;
+
+
+async function SaveTransaction(tx) {
+    var existing = [];
+    try {
+        existing = await txModel.getOne(tx._id);
+    } catch (e) {
+        if (e.error.indexOf("Invalid transaction hash supplied") == -1)
+            throw e;
+    }
+
+    if (existing.length == 0)
+        await txModel.insertOne(tx);
+}
 
 
 async function DownloadBTCTask(addr) {
@@ -40,9 +56,22 @@ async function DownloadBTCTask(addr) {
             var transactions = await bc.getBTCTransactions(addr, skip, limit);
 
             // Save to DB
+            const len = transactions.length;
+            console.log("Saving to DB");
+            for (var i=0; i<len; i++) {
+                const tx = {
+                    _id: transactions[i].hash, // Blockchain transactions hash
+                    sender: '', // unknown
+                    receiver: addr, // to address
+                    date: new Date(transactions[i].time * 1000),
+                    amount: transactions[i].amount,
+                    currency: "BTC",
+                    raw_data: transactions[i].raw_data,
+                };
 
-
-
+                // Save to DB
+                await SaveTransaction(tx);
+            }
 
             // Update status
             lastItem += limit;
@@ -87,8 +116,22 @@ async function DownloadBCHTask(addr) {
             var transactions = await bc.getBCHTransactions(addr, page);
 
             // Save to DB
+            const len = transactions.length;
+            console.log("Saving to DB");
+            for (var i=0; i<len; i++) {
+                const tx = {
+                    _id: transactions[i].hash, // Blockchain transactions hash
+                    sender: '', // unknown
+                    receiver: addr, // to address
+                    date: new Date(transactions[i].time * 1000),
+                    amount: transactions[i].amount,
+                    currency: "BCH",
+                    raw_data: transactions[i].raw_data,
+                };
 
-
+                // Save to DB
+                await SaveTransaction(tx);
+            }
 
             // Update status
             page += 1;
@@ -149,9 +192,22 @@ async function DownloadLTCTask(addr) {
             console.log("LTC lastReadTransactions = " + lastReadTransactions);
 
             // Save to DB
+            const len = transactions.length;
+            console.log("Saving to DB");
+            for (var i=0; i<len; i++) {
+                const tx = {
+                    _id: transactions[i].hash, // Blockchain transactions hash
+                    sender: transactions[i].address, //
+                    receiver: addr, // to address
+                    date: new Date(transactions[i].time * 1000),
+                    amount: transactions[i].amount,
+                    currency: "LTC",
+                    raw_data: transactions[i].raw_data,
+                };
 
-
-
+                // Save to DB
+                await SaveTransaction(tx);
+            }
 
             // Update status
             var statusUpdate = {_id: 'LTC' + addr, totalItems: 0, lastItem: lastItem};
@@ -167,7 +223,7 @@ async function DownloadLTCTask(addr) {
             await bcModel.set(statusUpdate);
         } catch (e) {
             failCount++;
-            console.log("Error, increasing fail count");
+            console.log("Error, increasing fail count: ", e);
         }
 
         if (failCount > 10) return;

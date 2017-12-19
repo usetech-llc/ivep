@@ -10,10 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "delay": "^2.0.0",
     "express": "^4.16.2",
     "mongodb": "^3.0.0-rc0",
+    "mongoose": "^4.13.7",
     "node-rest-client": "^3.1.0",
-    "node-schedule": "^1.2.5"
+    "node-schedule": "^1.2.5",
+    "q": "^1.5.1"
   },
   "devDependencies": {
     "nodemon": "^1.12.5"

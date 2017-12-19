@@ -65,13 +65,14 @@ async function getBTCTransactions(addr, offset, limit) {
     let url = btcBaseUrl + addr + '?format=json&offset=' + offset + '&limit=' + limit;
     let retArray = [];
     var index = 0;
-    const res = '';
+    var res = '';
     var requestFinished = false;
 
     while (!requestFinished) {
         try {
             res = await doRequest(url);
             requestFinished = true;
+            console.log("res: ", res);
         } catch (e) {
             if (e.toString().indexOf("Maximum concurrent requests for this endpoint reached.") != -1) {
                 // Delay and repeat
@@ -110,10 +111,11 @@ async function getBTCTransactions(addr, offset, limit) {
                     }
                 }
             }
+            return retArray;
         }
     }
 
-    return retArray;
+    throw new Error("Request error");
 }
 
 
